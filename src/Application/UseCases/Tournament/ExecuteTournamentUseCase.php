@@ -44,14 +44,13 @@ class ExecuteTournamentUseCase {
 
         shuffle($players); // mezcla los jugadores 
 
-        // Simulación del torneo: iterar por rondas
+        // Simulacion del torneo
         while (count($players) > 1) {
             $nextRoundPlayers = [];
             for ($i = 0; $i < count($players); $i += 2) {
                 $playerOne = $players[$i];
                 $playerTwo = $players[$i + 1];
                 
-                // Simular el partido y obtener el ganador
                 $winner = $this->simulateMatch($playerOne, $playerTwo, $tournament);
 
                 $tournamentMatch = new TournamentMatch(

@@ -16,10 +16,50 @@ $container->bind(
 $container->bind(
     \Src\Infrastructure\Http\Controllers\TournamentController::class,
     fn() => new \Src\Infrastructure\Http\Controllers\TournamentController(
-        $container->resolve(\Src\Application\UseCases\Tournament\ExecuteTournamentUseCase::class)
+        $container->resolve(\Src\Application\UseCases\Tournament\ListTournamentsUseCase::class),
+        $container->resolve(\Src\Application\UseCases\Tournament\CreateTournamentUseCase::class),
+        $container->resolve(\Src\Application\UseCases\Tournament\UpdateTournamentUseCase::class),
+        $container->resolve(\Src\Application\UseCases\Tournament\CancelTournamentUseCase::class),
+        $container->resolve(\Src\Application\UseCases\Tournament\ExecuteTournamentUseCase::class),
+        $container->resolve(Src\Application\UseCases\Tournament\RegisterPlayerToTournamentUseCase::class)
     )
 );
 
+$container->bind(
+    \Src\Application\UseCases\Tournament\ListTournamentsUseCase::class,
+    fn() => new \Src\Application\UseCases\Tournament\ListTournamentsUseCase(
+        new \Src\Infrastructure\Persistence\TournamentRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        )
+    )
+);
+
+$container->bind(
+    \Src\Application\UseCases\Tournament\CreateTournamentUseCase::class,
+    fn() => new \Src\Application\UseCases\Tournament\CreateTournamentUseCase(
+        new \Src\Infrastructure\Persistence\TournamentRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        )
+    )
+);
+
+$container->bind(
+    \Src\Application\UseCases\Tournament\UpdateTournamentUseCase::class,
+    fn() => new \Src\Application\UseCases\Tournament\UpdateTournamentUseCase(
+        new \Src\Infrastructure\Persistence\TournamentRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        )
+    )
+);
+
+$container->bind(
+    \Src\Application\UseCases\Tournament\CancelTournamentUseCase::class,
+    fn() => new \Src\Application\UseCases\Tournament\CancelTournamentUseCase(
+        new \Src\Infrastructure\Persistence\TournamentRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        )
+    )
+);
 
 $container->bind(
     \Src\Application\UseCases\Tournament\ExecuteTournamentUseCase::class,
@@ -31,6 +71,21 @@ $container->bind(
             \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
         ),
         new \Src\Infrastructure\Persistence\TournamentMatchRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        )
+    )
+);
+
+$container->bind(
+    \Src\Application\UseCases\Tournament\RegisterPlayerToTournamentUseCase::class,
+    fn() => new \Src\Application\UseCases\Tournament\RegisterPlayerToTournamentUseCase(
+        new \Src\Infrastructure\Persistence\TournamentRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        ),
+        new \Src\Infrastructure\Persistence\PlayerRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        ),
+        new \Src\Infrastructure\Persistence\TournamentRegistrationRepository(
             \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
         )
     )

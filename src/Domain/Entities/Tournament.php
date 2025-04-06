@@ -5,8 +5,8 @@ use DateTimeImmutable;
 use Src\Domain\Enums\TournamentCategory;
 use Src\Domain\Enums\TournamentStatus;
 
-class Tournament{
-    private int $id;
+class Tournament implements \JsonSerializable{
+    private ?int $id;
     private string $name;
     private TournamentCategory $category;
     private TournamentStatus $status;
@@ -16,7 +16,7 @@ class Tournament{
         ?int $id,
         string $name,  
         TournamentCategory $category,
-        TournamentStatus $status,
+        TournamentStatus $status = TournamentStatus::PENDING,
         DateTimeImmutable $created_at = new DateTimeImmutable(),
         DateTimeImmutable $updated_at = new DateTimeImmutable()
     )
@@ -33,7 +33,7 @@ class Tournament{
         $this->id = $id;
     }
 
-    public function getId() : int{
+    public function getId() : ?int{
         return $this->id;
     }
 
@@ -82,5 +82,20 @@ class Tournament{
         $name = strtolower($name);
         $name = preg_replace('/\s+/', ' ', $name);
         return $name;
+    }
+
+    public function toArray(): array {
+       return [
+          'id' => $this->id,
+          'name' => $this->name,
+          'category_id' => $this->category->value,
+          'status_id' => $this->status->value,
+          'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+          'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+        ];
+    }
+
+    public function jsonSerialize(): array {
+        return $this->toArray();
     }
 }

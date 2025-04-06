@@ -136,12 +136,12 @@ class Player implements \JsonSerializable
 
       if ($gender->isMale() && (is_null($strength) || is_null($speed))) 
       {
-          throw new \InvalidArgumentException("Male players require strength and speed.");
+        throw new \InvalidArgumentException("Male players require strength and speed.");
       }
 
       if ($gender->isFemale() && is_null($reaction_time)) 
       {
-          throw new \InvalidArgumentException("Female players require reaction time.");
+        throw new \InvalidArgumentException("Female players require reaction time.");
       }
 
       $this->strength = $strength;

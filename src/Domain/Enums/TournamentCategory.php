@@ -18,4 +18,8 @@ enum TournamentCategory: int {
     public function isWomens(): bool {
         return $this === self::WOMENS;
     }
+
+    public static function isValid(int $value): bool {
+        return $value === self::MENS->value || $value === self::WOMENS->value;
+    }
 }
