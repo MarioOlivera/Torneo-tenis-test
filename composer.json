@@ -1,0 +1,26 @@
+{
+  "name": "mario/torneo-tenis-test",
+  "description": "Proyecto torneo tenis prueba tecnica",
+  "type": "project",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Src\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Mario Olivera",
+      "email": "mario.olivera96@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^8.0",
+    "ext-json": "*"
+  },
+  "scripts": {
+    "serve": "php -d max_execution_time=0 -S localhost:8000 -t public",
+    "serve-dev": "php -S 0.0.0.0:8000 -t public"
+  }
+}
