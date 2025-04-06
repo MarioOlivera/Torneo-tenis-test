@@ -3,7 +3,6 @@ namespace Src\Domain\Entities;
 
 use DateTimeImmutable;
 use Src\Domain\Enums\Gender;
-use Src\Domain\Exceptions\InvalidPlayerNameException;
 
 class Player implements \JsonSerializable
 {

@@ -3,7 +3,48 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $container = new \Src\Infrastructure\Http\Container();
 
-// Registra las dependencias:
+// Registrando las dependencias
+$container->bind(
+    \Src\Infrastructure\Http\Controllers\PlayerController::class,
+    fn() => new \Src\Infrastructure\Http\Controllers\PlayerController(
+        $container->resolve(\Src\Application\UseCases\Player\ListPlayersUseCase::class),
+        $container->resolve(\Src\Application\UseCases\Player\CreatePlayerUseCase::class),
+        $container->resolve(\Src\Application\UseCases\Player\UpdatePlayerUseCase::class)
+    )
+);
+
+$container->bind(
+    \Src\Infrastructure\Http\Controllers\TournamentController::class,
+    fn() => new \Src\Infrastructure\Http\Controllers\TournamentController(
+        $container->resolve(\Src\Application\UseCases\Tournament\ExecuteTournamentUseCase::class)
+    )
+);
+
+
+$container->bind(
+    \Src\Application\UseCases\Tournament\ExecuteTournamentUseCase::class,
+    fn() => new \Src\Application\UseCases\Tournament\ExecuteTournamentUseCase(
+        new \Src\Infrastructure\Persistence\TournamentRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        ),
+        new \Src\Infrastructure\Persistence\PlayerRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        ),
+        new \Src\Infrastructure\Persistence\TournamentMatchRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        )
+    )
+);
+
+$container->bind(
+    \Src\Application\UseCases\Player\UpdatePlayerUseCase::class,
+    fn() => new \Src\Application\UseCases\Player\UpdatePlayerUseCase(
+        new \Src\Infrastructure\Persistence\PlayerRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        )
+    )
+);
+
 $container->bind(
     \Src\Application\UseCases\Player\ListPlayersUseCase::class,
     fn() => new \Src\Application\UseCases\Player\ListPlayersUseCase(
@@ -19,14 +60,6 @@ $container->bind(
         new \Src\Infrastructure\Persistence\PlayerRepository(
             \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
         )
-    )
-);
-
-$container->bind(
-    \Src\Infrastructure\Http\Controllers\PlayerController::class,
-    fn() => new \Src\Infrastructure\Http\Controllers\PlayerController(
-        $container->resolve(\Src\Application\UseCases\Player\ListPlayersUseCase::class),
-        $container->resolve(\Src\Application\UseCases\Player\CreatePlayerUseCase::class)
     )
 );
 

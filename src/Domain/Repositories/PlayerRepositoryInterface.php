@@ -8,4 +8,5 @@ interface PlayerRepositoryInterface {
     public function save(Player $player): Player;
     public function findById(int $id): ?Player;
     public function delete(int $id): bool;
+    public function findPlayersByTournamentId(int $tournamentId): array;
 }

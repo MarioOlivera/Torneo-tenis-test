@@ -1,8 +1,8 @@
 <?php
 namespace Src\Infrastructure\Http\Router;
 
-use Exception;
 use \Src\Infrastructure\Http\Container;
+use Src\Infrastructure\Http\Responses\Envelope;
 
 final class Router {
     private static array $routes = [];
@@ -13,6 +13,14 @@ final class Router {
 
     public static function post(string $uri, array $action): void {
         self::addRoute('POST', $uri, $action);
+    }
+
+    public static function patch(string $uri, array $action): void {
+        self::addRoute('PATCH', $uri, $action);
+    }
+
+    public static function put(string $uri, array $action): void {
+        self::addRoute('PUT', $uri, $action);
     }
 
     private static function addRoute(string $method, string $uri, array $action): void {
@@ -27,10 +35,8 @@ final class Router {
                 $controller = $container->resolve($controllerClass);
 
                 /*
-                // Obtiene JSON para POST/PUT
                 $data = in_array($requestMethod, ['POST', 'PUT', 'PATCH']) ? self::getJsonInput() : [];
                 
-                // Combina parámetros URL + JSON
                 $params = array_merge(
                     self::extractParams($routeUri, $requestUri),
                     ['data' => $data] // Añade los datos JSON
@@ -54,7 +60,12 @@ final class Router {
                 return;
             }
         }
-        throw new Exception("Route not found", 404);
+
+        $envelope = Envelope::get404Response();
+        header('Content-Type: application/json');
+        http_response_code($envelope->getHttpCode());
+        echo json_encode($envelope);
+        return;
     }
 
     private static function matches(string $routeUri, string $requestUri): bool {

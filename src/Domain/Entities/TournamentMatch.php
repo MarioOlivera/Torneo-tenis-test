@@ -5,7 +5,7 @@ use DateTimeImmutable;
 
 class TournamentMatch
 {
-    private int $id;
+    private ?int $id;
     private Tournament $tournament;
     private Player $player_one;
     private Player $player_two;
@@ -32,7 +32,7 @@ class TournamentMatch
         $this->updated_at = $updated_at;
     }
 
-    public function getId(): int { return $this->id; }
+    public function getId(): ?int { return $this->id; }
     private function setId(?int $id): void { $this->id = $id; $this->setUpdatedAt(new DateTimeImmutable()); }
 
     public function getTournament() : Tournament

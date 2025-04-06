@@ -12,7 +12,6 @@ class Tournament{
     private TournamentStatus $status;
     private DateTimeImmutable $created_at;
     private DateTimeImmutable $updated_at;
-
     public function __construct(
         ?int $id,
         string $name,  

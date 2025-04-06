@@ -7,10 +7,10 @@ class MySQLiConnection {
     public static function getInstance(): \mysqli {
         if (self::$connection === null) {
             self::$connection = new \mysqli(
-                'localhost',  // Host
-                'root',    // Usuario DB
-                '', // Contraseña
-                'torneo'   // Nombre DB
+                'localhost',
+                'root',
+                '', 
+                'torneo'
             );
             
             if (self::$connection->connect_error) {

@@ -55,6 +55,14 @@ final class Envelope implements \JsonSerializable
         return $this->httpCode;
     }
 
+    public static function get404Response() : Envelope {
+        $envelope = new Envelope();
+        $envelope->setResponse(false);
+        $envelope->setErrors(new ErrorResponse(\Src\Domain\Enums\ErrorCode::NOT_FOUND_RESOURCE, "Not Found"));
+        $envelope->setHttpCode(404);
+        return $envelope;
+    }
+
     public function jsonSerialize(): array {
         return [
             "response" => $this->response,
