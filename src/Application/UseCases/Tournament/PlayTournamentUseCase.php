@@ -13,7 +13,7 @@ use Src\Domain\Exceptions\TournamentIsNotPendingException;
 use Src\Domain\Exceptions\TournamentNotPlayersRegisteredException;
 use Src\Domain\Exceptions\TournamentInvalidPlayersCountException;
 
-class ExecuteTournamentUseCase {
+class PlayTournamentUseCase {
     public function __construct(
          private TournamentRepositoryInterface $tournamentRepository,
          private PlayerRepositoryInterface $playerRepository,

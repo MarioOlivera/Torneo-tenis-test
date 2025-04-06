@@ -8,7 +8,7 @@ use Src\Application\UseCases\Tournament\CreateTournamentUseCase;
 use Src\Application\UseCases\Tournament\UpdateTournamentUseCase;
 use Src\Application\UseCases\Tournament\ListTournamentsUseCase;
 use Src\Application\UseCases\Tournament\CancelTournamentUseCase;
-use Src\Application\UseCases\Tournament\ExecuteTournamentUseCase;
+use Src\Application\UseCases\Tournament\PlayTournamentUseCase;
 use Src\Application\UseCases\Tournament\RegisterPlayerToTournamentUseCase;
 use Src\Application\DTOs\Tournament\CreateTournamentDTO;
 use Src\Application\DTOs\Tournament\UpdateTournamentDTO;
@@ -20,7 +20,7 @@ class TournamentController {
         private CreateTournamentUseCase $createTournamentUseCase,
         private UpdateTournamentUseCase $updateTournamentUseCase,
         private CancelTournamentUseCase $cancelTournamentUseCase,
-        private ExecuteTournamentUseCase $executeTournamentUseCase,
+        private PlayTournamentUseCase $playTournamentUseCase,
         private RegisterPlayerToTournamentUseCase $registerPlayerToTournamentUseCase
     ) {}
 
@@ -108,12 +108,12 @@ class TournamentController {
         return $response;
     }
 
-    public function execute(int $id, array $data) : Envelope {
+    public function play(int $id, array $data) : Envelope {
         $response = new Envelope();
 
         try
         {
-            $this->executeTournamentUseCase->execute($id);
+            $this->playTournamentUseCase->execute($id);
             $response->setData(["RECIBI" => $id]);
         }
         catch (\Src\Domain\Exceptions\DomainException $e) {

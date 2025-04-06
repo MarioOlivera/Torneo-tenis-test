@@ -20,7 +20,7 @@ $container->bind(
         $container->resolve(\Src\Application\UseCases\Tournament\CreateTournamentUseCase::class),
         $container->resolve(\Src\Application\UseCases\Tournament\UpdateTournamentUseCase::class),
         $container->resolve(\Src\Application\UseCases\Tournament\CancelTournamentUseCase::class),
-        $container->resolve(\Src\Application\UseCases\Tournament\ExecuteTournamentUseCase::class),
+        $container->resolve(\Src\Application\UseCases\Tournament\PlayTournamentUseCase::class),
         $container->resolve(Src\Application\UseCases\Tournament\RegisterPlayerToTournamentUseCase::class)
     )
 );
@@ -62,8 +62,8 @@ $container->bind(
 );
 
 $container->bind(
-    \Src\Application\UseCases\Tournament\ExecuteTournamentUseCase::class,
-    fn() => new \Src\Application\UseCases\Tournament\ExecuteTournamentUseCase(
+    \Src\Application\UseCases\Tournament\PlayTournamentUseCase::class,
+    fn() => new \Src\Application\UseCases\Tournament\PlayTournamentUseCase(
         new \Src\Infrastructure\Persistence\TournamentRepository(
             \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
         ),

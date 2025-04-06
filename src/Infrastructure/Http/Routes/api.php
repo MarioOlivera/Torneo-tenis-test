@@ -10,7 +10,7 @@ Router::get('/tournaments', [TournamentController::class, 'index']);
 Router::post('/tournaments', [TournamentController::class, 'store']);
 Router::patch('/tournaments/{id}', [TournamentController::class, 'update']);
 Router::post('/tournaments/{id}/cancel', [TournamentController::class, 'cancel']);
-Router::post('/tournaments/{id}/execute', [TournamentController::class, 'execute']);
+Router::post('/tournaments/{id}/play', [TournamentController::class, 'play']);
 Router::post('/tournaments/{id}/registrations', [TournamentController::class, 'registerPlayer']);
 
 // THE PLAYERS ENDPOINTS
