@@ -4,6 +4,7 @@ namespace Src\Application\UseCases\Tournament;
 use Src\Application\DTOs\Tournament\UpdateTournamentDTO;
 use Src\Domain\Repositories\TournamentRepositoryInterface;
 use Src\Domain\Entities\Tournament;
+use Src\Domain\Exceptions\TournamentNotFoundException;
 
 class UpdateTournamentUseCase {
     public function __construct(
@@ -14,11 +15,7 @@ class UpdateTournamentUseCase {
         $tournament = $this->tournamentRepository->findById($dto->id);
 
         if (!$tournament) {
-            throw new \Src\Domain\Exceptions\DomainException(
-                "Tournament not found", 
-                \Src\Domain\Enums\ErrorCode::VALIDATION, 
-                404
-            );
+            throw new TournamentNotFoundException("Tournament ".$dto->id." not found", 404);
         }
 
         if (!is_null($dto->name)) {
