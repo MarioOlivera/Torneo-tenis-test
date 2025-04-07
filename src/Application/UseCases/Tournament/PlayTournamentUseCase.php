@@ -69,7 +69,7 @@ class PlayTournamentUseCase {
             $players = $nextRoundPlayers;
         }
 
-        $this->tournamentRepository->updateStatus($tournamentId, TournamentStatus::COMPLETED->value);
+        $this->tournamentRepository->updateStatus($tournamentId, TournamentStatus::PLAYED->value);
 
         return $players[0];
     }

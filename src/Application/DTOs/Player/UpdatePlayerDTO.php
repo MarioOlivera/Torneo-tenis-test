@@ -33,8 +33,13 @@ final class UpdatePlayerDTO {
         $errors = [];
 
         if (isset($data['name'])) {
-            if (strlen(trim($data['name'])) < 3) {
+            $data['name'] = preg_replace('/\s+/', ' ', trim($data["name"]));
+
+            if (strlen(str_replace(' ', '', $data['name'])) < 3) {
                 $errors['name'] = 'Name must be at least 3 characters';
+            }
+            else if (!preg_match('/^[\p{L}\s]+$/u', $data['name'])) {
+                $errors['name'] = 'Name must contain only letters and spaces';
             }
         }
 

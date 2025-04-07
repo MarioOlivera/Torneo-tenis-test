@@ -115,7 +115,7 @@ class PlayerRepository implements PlayerRepositoryInterface {
         }
         
         $data = $result->fetch_assoc();
-        
+
         return new Player(
             $data['id'],
             $data['name'],

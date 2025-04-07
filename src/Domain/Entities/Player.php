@@ -4,6 +4,13 @@ namespace Src\Domain\Entities;
 use DateTimeImmutable;
 use Src\Domain\Enums\Gender;
 
+use Src\Domain\Exceptions\MalePlayersRequireStrengthAndSpeedException;
+use Src\Domain\Exceptions\FemalePlayersRequireReactionTimeException;
+use Src\Domain\Exceptions\InvalidPlayerNameException;
+use Src\Domain\Exceptions\SkillLevelOutOfRangeException;
+use Src\Domain\Exceptions\StrengthOutOfRangeException;
+use Src\Domain\Exceptions\SpeedOutOfRangeException;
+use Src\Domain\Exceptions\ReactionTimeOutOfRangeException;
 class Player implements \JsonSerializable
 {
     private ?int $id;
@@ -30,8 +37,8 @@ class Player implements \JsonSerializable
         $this->setId($id);
         $this->setName($name);
         $this->setSkillLevel($skill_level);
-        $this->setGender($gender);
         $this->validateGenderAttributes($gender,$strength,$speed,$reaction_time);
+        $this->setGender($gender);
         $this->setCreatedAt($created_at);
         $this->setUpdatedAt($updated_at);
     }
@@ -48,7 +55,7 @@ class Player implements \JsonSerializable
 
     public function setName(string $name): void { 
       if (!preg_match('/^[\p{L}\s]+$/u', $name)) {
-        throw new \InvalidArgumentException("Name must contain only letters and spaces.");
+        throw new InvalidPlayerNameException("Name must contain only letters and spaces.");
       }
 
       $this->name = $this->normalizeName($name); 
@@ -61,7 +68,7 @@ class Player implements \JsonSerializable
     public function setSkillLevel(int $skill_level): void 
     {
         if ($skill_level < 0 || $skill_level > 100) {
-            throw new \InvalidArgumentException("Skill level must be between 0 and 100.");
+            throw new SkillLevelOutOfRangeException("Skill level must be between 0 and 100.");
         }
 
         $this->skill_level = $skill_level;
@@ -73,7 +80,7 @@ class Player implements \JsonSerializable
 
     public function setStrength(?int $strength): void { 
       if ($strength < 0 || $strength > 100) {
-        throw new \InvalidArgumentException("Strength must be between 0 and 100.");
+        throw new StrengthOutOfRangeException("Strength must be between 0 and 100.");
       }
 
       $this->strength = $strength;
@@ -85,7 +92,7 @@ class Player implements \JsonSerializable
 
     public function setSpeed(?int $speed): void { 
       if ($speed < 0 || $speed > 100) {
-        throw new \InvalidArgumentException("Speed must be between 0 and 100.");
+        throw new SpeedOutOfRangeException("Speed must be between 0 and 100.");
       }
 
       $this->speed = $speed;
@@ -97,7 +104,7 @@ class Player implements \JsonSerializable
     
     public function setReactionTime(?int $reaction_time): void { 
       if ($reaction_time < 0 || $reaction_time > 100) {
-        throw new \InvalidArgumentException("Reaction time must be between 0 and 100.");
+        throw new ReactionTimeOutOfRangeException("Reaction time must be between 0 and 100.");
       }
 
       $this->reaction_time = $reaction_time;
@@ -108,6 +115,8 @@ class Player implements \JsonSerializable
     public function getGender(): Gender { return $this->gender; }
 
     public function setGender(Gender $gender): void { 
+      $this->validateGenderAttributes($gender, $this->strength, $this->speed, $this->reaction_time);
+
       $this->gender = $gender; 
     
       $this->setUpdatedAt(new DateTimeImmutable()); 
@@ -136,12 +145,12 @@ class Player implements \JsonSerializable
 
       if ($gender->isMale() && (is_null($strength) || is_null($speed))) 
       {
-        throw new \InvalidArgumentException("Male players require strength and speed.");
+        throw new MalePlayersRequireStrengthAndSpeedException("Male players require strength and speed.");
       }
 
       if ($gender->isFemale() && is_null($reaction_time)) 
       {
-        throw new \InvalidArgumentException("Female players require reaction time.");
+        throw new FemalePlayersRequireReactionTimeException("Female players require reaction time.");
       }
 
       $this->strength = $strength;

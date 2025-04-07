@@ -30,13 +30,18 @@ final class CreatePlayerDTO {
     private static function validate(array $data): void {
         $errors = [];
 
-        if (!isset($data['name']) || empty(trim($data['name']))) {
+        $data["name"] = isset($data["name"]) ? preg_replace('/\s+/', ' ', trim($data["name"])) : null;
+
+        if (empty($data["name"])) {
             $errors['name'] = 'Name is required';
         }
         else
         {
-            if (strlen($data['name']) < 3) {
+            if (strlen(str_replace(' ', '', $data['name'])) < 3) {
                 $errors['name'] = 'Name must be at least 3 characters';
+            }
+            else if (!preg_match('/^[\p{L}\s]+$/u', $data['name'])) {
+                $errors['name'] = 'Name must contain only letters and spaces';
             }
         }
 

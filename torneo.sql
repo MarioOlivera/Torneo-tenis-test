@@ -145,7 +145,7 @@ CREATE TABLE `tournament_statuses` (
 
 INSERT INTO `tournament_statuses` (`id`, `state`, `created_at`, `updated_at`) VALUES
 (1, 'PENDING', '2025-04-04 15:54:27', '2025-04-04 15:54:27'),
-(2, 'COMPLETED', '2025-04-04 15:54:27', '2025-04-04 15:54:27'),
+(2, 'PLAYED', '2025-04-04 15:54:27', '2025-04-04 15:54:27'),
 (3, 'CANCELLED', '2025-04-04 15:54:44', '2025-04-04 15:54:44');
 
 --

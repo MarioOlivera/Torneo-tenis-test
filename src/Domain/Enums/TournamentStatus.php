@@ -3,14 +3,14 @@ namespace Src\Domain\Enums;
 
 enum TournamentStatus: int {
     case PENDING = 1;
-    case COMPLETED = 2;
+    case PLAYED = 2;
     case CANCELLED = 3;
     
     
     public function displayName(): string {
         return match ($this) {
             self::PENDING => "Pending",
-            self::COMPLETED => "Completed",
+            self::PLAYED => "Played",
             self::CANCELLED => "Cancelled",
         };
     }
@@ -19,9 +19,9 @@ enum TournamentStatus: int {
         return $this == self::PENDING;
     }
 
-    public function isCompleted() : bool
+    public function isPlayed() : bool
     {
-        return $this == self::COMPLETED;
+        return $this == self::PLAYED;
     }
 
     public function isCancelled() : bool
