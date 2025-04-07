@@ -9,7 +9,8 @@ $container->bind(
     fn() => new \Src\Infrastructure\Http\Controllers\PlayerController(
         $container->resolve(\Src\Application\UseCases\Player\ListPlayersUseCase::class),
         $container->resolve(\Src\Application\UseCases\Player\CreatePlayerUseCase::class),
-        $container->resolve(\Src\Application\UseCases\Player\UpdatePlayerUseCase::class)
+        $container->resolve(\Src\Application\UseCases\Player\UpdatePlayerUseCase::class),
+        $container->resolve(\Src\Application\UseCases\Player\ShowPlayerUseCase::class)
     )
 );
 
@@ -116,6 +117,15 @@ $container->bind(
 $container->bind(
     \Src\Application\UseCases\Player\CreatePlayerUseCase::class,
     fn() => new \Src\Application\UseCases\Player\CreatePlayerUseCase(
+        new \Src\Infrastructure\Persistence\PlayerRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        )
+    )
+);
+
+$container->bind(
+    \Src\Application\UseCases\Player\ShowPlayerUseCase::class,
+    fn() => new \Src\Application\UseCases\Player\ShowPlayerUseCase(
         new \Src\Infrastructure\Persistence\PlayerRepository(
             \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
         )

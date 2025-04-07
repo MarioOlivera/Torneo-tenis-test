@@ -11,12 +11,12 @@ use Src\Domain\Exceptions\PlayerNotFoundException;
 
 class UpdatePlayerUseCase {
     public function __construct(
-        private PlayerRepositoryInterface $repository,
+        private PlayerRepositoryInterface $playerRepository,
         private TournamentRegistrationRepositoryInterface $tournamentRegistrationRepositoryInterface
     ) {}
 
     public function execute(UpdatePlayerDTO $dto): Player {
-        $player = $this->repository->findById($dto->id);
+        $player = $this->playerRepository->findById($dto->id);
 
         if (!$player) {
             throw new PlayerNotFoundException("Player ".$dto->id." not found", 404);
@@ -52,6 +52,6 @@ class UpdatePlayerUseCase {
             $player->setGender($dto->gender);
         }
 
-        return $this->repository->save($player);
+        return $this->playerRepository->save($player);
     }
 }

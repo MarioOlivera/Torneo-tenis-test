@@ -28,4 +28,8 @@ enum TournamentStatus: int {
     {
         return $this == self::CANCELLED;
     }
+    
+    public static function isValid(int $value): bool {
+        return $value === self::PENDING->value || $value === self::PLAYED->value  || $value === self::CANCELLED->value;
+    }
 }

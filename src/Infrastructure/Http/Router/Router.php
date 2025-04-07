@@ -3,6 +3,7 @@ namespace Src\Infrastructure\Http\Router;
 
 use \Src\Infrastructure\Http\Container;
 use Src\Infrastructure\Http\Responses\Envelope;
+use Src\Infrastructure\Http\Request;
 
 final class Router {
     private static array $routes = [];
@@ -34,23 +35,12 @@ final class Router {
 
                 $controller = $container->resolve($controllerClass);
 
-                /*
-                $data = in_array($requestMethod, ['POST', 'PUT', 'PATCH']) ? self::getJsonInput() : [];
-                
+                $request = new Request($_GET ?? [], self::getJsonInput() ?? []);
+
                 $params = array_merge(
+                    ["request" => $request],
                     self::extractParams($routeUri, $requestUri),
-                    ['data' => $data] // Añade los datos JSON
                 );
-                */
-
-                $params = self::extractParams($routeUri, $requestUri);
-
-                if(in_array($requestMethod, ['POST', 'PUT', 'PATCH']))
-                {
-                    $params['data'] = self::getJsonInput();
-
-                    //print($params['data']);
-                }
 
                 $envelope = $controller->$method(...$params);
 

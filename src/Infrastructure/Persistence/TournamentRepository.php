@@ -9,23 +9,63 @@ use Src\Domain\Enums\TournamentStatus;
 class TournamentRepository implements TournamentRepositoryInterface {
     public function __construct(private \mysqli $connection) {}
 
-    public function findAll(): array
-    {
+    public function findAll(?string $start_date, ?string $end_date, ?int $category_id, ?int $status_id): array {
         $query = "SELECT * FROM tournaments";
-        $result = $this->connection->query($query);
-
+        $conditions = [];
+        $params = [];
+        $types = "";
+    
+        if ($start_date !== null) {
+            $conditions[] = "DATE(created_at) >= ?";
+            $types .= "s";
+            $params[] = $start_date;
+        }
+    
+        if ($end_date !== null) {
+            $conditions[] = "DATE(created_at) <= ?";
+            $types .= "s";
+            $params[] = $end_date;
+        }
+    
+        if ($category_id !== null) {
+            $conditions[] = "category_id = ?";
+            $types .= "i";
+            $params[] = $category_id;
+        }
+    
+        if ($status_id !== null) {
+            $conditions[] = "status_id = ?";
+            $types .= "i";
+            $params[] = $status_id;
+        }
+    
+        if (!empty($conditions)) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+    
+        $stmt = $this->connection->prepare($query);
+        
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+        
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
         $tournaments = [];
         while ($row = $result->fetch_assoc()) {
             $tournaments[] = new Tournament(
-                $row['id'],
+                (int)$row['id'],
                 $row['name'],
-                TournamentCategory::from($row['category_id']),
-                TournamentStatus::from($row['status_id']),
+                TournamentCategory::from((int)$row['category_id']),
+                TournamentStatus::from((int)$row['status_id']),
                 new \DateTimeImmutable($row['created_at']),
                 new \DateTimeImmutable($row['updated_at'])
             );
         }
 
+        $stmt->close();
+    
         return $tournaments;
     }
 
