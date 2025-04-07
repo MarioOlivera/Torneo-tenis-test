@@ -3,22 +3,23 @@ namespace Src\Application\UseCases\Player;
 
 use Src\Application\DTOs\Player\UpdatePlayerDTO;
 use Src\Domain\Repositories\PlayerRepositoryInterface;
+use Src\Domain\Repositories\TournamentRegistrationRepositoryInterface;
 use Src\Domain\Entities\Player;
+use Src\Domain\Enums\TournamentStatus;
+use Src\Domain\Exceptions\PlayerRegisteredInPendingTournamentException;
+use Src\Domain\Exceptions\PlayerNotFoundException;
 
 class UpdatePlayerUseCase {
     public function __construct(
-        private PlayerRepositoryInterface $repository
+        private PlayerRepositoryInterface $repository,
+        private TournamentRegistrationRepositoryInterface $tournamentRegistrationRepositoryInterface
     ) {}
 
     public function execute(UpdatePlayerDTO $dto): Player {
         $player = $this->repository->findById($dto->id);
 
         if (!$player) {
-            throw new \Src\Domain\Exceptions\DomainException(
-                "Player not found", 
-                \Src\Domain\Enums\ErrorCode::VALIDATION, 
-                404
-            );
+            throw new PlayerNotFoundException("Player ".$dto->id." not found", 404);
         }
 
         if (!is_null($dto->name)) {
@@ -37,6 +38,17 @@ class UpdatePlayerUseCase {
             $player->setReactionTime($dto->reaction_time);
         }
         if (!is_null($dto->gender)) {
+
+            if($dto->gender->value !== $player->getGender()->value)
+            {
+                $hash_pending_tournaments = $this->tournamentRegistrationRepositoryInterface->hasTournamentRegistrationWithStatus($player->getId(), TournamentStatus::PENDING->value);
+            
+                if($hash_pending_tournaments)
+                {
+                    throw new PlayerRegisteredInPendingTournamentException();
+                }
+            }
+
             $player->setGender($dto->gender);
         }
 

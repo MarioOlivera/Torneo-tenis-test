@@ -91,10 +91,14 @@ $container->bind(
     )
 );
 
+
 $container->bind(
     \Src\Application\UseCases\Player\UpdatePlayerUseCase::class,
     fn() => new \Src\Application\UseCases\Player\UpdatePlayerUseCase(
         new \Src\Infrastructure\Persistence\PlayerRepository(
+            \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
+        ),
+        new \Src\Infrastructure\Persistence\TournamentRegistrationRepository(
             \Src\Infrastructure\Persistence\MySQLiConnection::getInstance()
         )
     )

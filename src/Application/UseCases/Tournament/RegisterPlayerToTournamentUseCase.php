@@ -37,7 +37,7 @@ class RegisterPlayerToTournamentUseCase {
         $player = $this->playerRepository->findById($playerId);
 
         if(!$player) {
-            throw new PlayerNotFoundException("Player ".$playerId." not found", 400);
+            throw new PlayerNotFoundException("Player ".$playerId." not found", 404);
         }
 
         return $this->tournamentRegistrationRepository->save(new TournamentRegistration(null, $player, $tournament));

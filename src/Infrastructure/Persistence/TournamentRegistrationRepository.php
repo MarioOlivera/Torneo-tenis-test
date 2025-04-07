@@ -61,4 +61,26 @@ class TournamentRegistrationRepository implements TournamentRegistrationReposito
 
         return $tournament_registration;
     }
+
+    public function hasTournamentRegistrationWithStatus(int $playerId, int $statusId): bool {
+        $stmt = $this->connection->prepare(
+            "SELECT COUNT(*) as count FROM tournament_registrations
+            INNER JOIN tournaments ON tournament_registrations.tournament_id = tournaments.id
+            WHERE tournament_registrations.player_id = ? 
+            AND tournaments.status_id = ?"
+        );
+
+        if (!$stmt) {
+            throw new \Exception("Failed to prepare statement: " . $this->connection->error);
+        }
+        
+        $stmt->bind_param("ii", $playerId, $statusId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        
+        return ((int)$row['count']) > 0;
+    }
+    
 }

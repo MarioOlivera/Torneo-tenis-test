@@ -19,6 +19,7 @@ enum ErrorCode: int {
     case STRENGTH_OUT_OF_RANGE = 15;
     case SPEED_OUT_OF_RANGE = 16;
     case REACTION_TIME_OUT_OF_RANGE = 17;
+    case PLAYER_REGISTERED_IN_PENDING_TOURNAMENT = 18;
 
     public function description(): string {
         return match($this) {
@@ -39,6 +40,7 @@ enum ErrorCode: int {
             self::STRENGTH_OUT_OF_RANGE => "Strength out of range",
             self::SPEED_OUT_OF_RANGE => "Speed out of range",
             self::REACTION_TIME_OUT_OF_RANGE => "Reaction time out of range",
+            self::PLAYER_REGISTERED_IN_PENDING_TOURNAMENT => "Player registered in pending tournament",
         };
     }
 }
