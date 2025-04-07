@@ -13,6 +13,9 @@ use Src\Domain\Exceptions\TournamentIsNotPendingException;
 use Src\Domain\Exceptions\TournamentNotPlayersRegisteredException;
 use Src\Domain\Exceptions\TournamentInvalidPlayersCountException;
 
+use Src\Application\DTOs\Tournament\TournamentResultDTO;
+use Src\Domain\Collections\TournamentMatchCollection;
+
 class PlayTournamentUseCase {
     public function __construct(
          private TournamentRepositoryInterface $tournamentRepository,
@@ -20,7 +23,7 @@ class PlayTournamentUseCase {
          private TournamentMatchRepositoryInterface $tournamentMatchRepository
     ){}
 
-    public function execute(int $tournamentId): Player 
+    public function execute(int $tournamentId): TournamentResultDTO 
     {
         $tournament = $this->tournamentRepository->findById($tournamentId);
 
@@ -44,6 +47,8 @@ class PlayTournamentUseCase {
 
         shuffle($players); // mezcla los jugadores 
 
+        $tournamentsMatchsCollection = new TournamentMatchCollection();
+
         // Simulacion del torneo
         while (count($players) > 1) {
             $nextRoundPlayers = [];
@@ -51,7 +56,7 @@ class PlayTournamentUseCase {
                 $playerOne = $players[$i];
                 $playerTwo = $players[$i + 1];
                 
-                $winner = $this->simulateMatch($playerOne, $playerTwo, $tournament);
+                $winner = $this->simulateMatch($playerOne, $playerTwo, $tournament, null, null);
 
                 $tournamentMatch = new TournamentMatch(
                     null,
@@ -61,7 +66,8 @@ class PlayTournamentUseCase {
                     $winner
                 );
 
-                $this->tournamentMatchRepository->save($tournamentMatch);
+                $tournamentMatch = $this->tournamentMatchRepository->save($tournamentMatch);
+                $tournamentsMatchsCollection->append($tournamentMatch);
                     
                 $nextRoundPlayers[] = $winner;
             }
@@ -69,17 +75,29 @@ class PlayTournamentUseCase {
             $players = $nextRoundPlayers;
         }
 
-        $this->tournamentRepository->updateStatus($tournamentId, TournamentStatus::PLAYED->value);
+        $tournament->setStatus(TournamentStatus::PLAYED);
 
-        return $players[0];
+        $this->tournamentRepository->save($tournament);
+
+        return new TournamentResultDTO(
+            $tournament, 
+            $tournamentsMatchsCollection, 
+            $players[0]
+        );
     }
-    private function simulateMatch(Player $playerOne, Player $playerTwo, Tournament $tournament): Player {
-        $luckOne = rand(0, 10);
-        $luckTwo = rand(0, 10);
-
+    private function simulateMatch(
+        Player $playerOne, 
+        Player $playerTwo, 
+        Tournament $tournament, 
+        ?int $luckOne, 
+        ?int $luckTwo
+    ): Player {
+        $luckOne = $luckOne ?? rand(0, 10);
+        $luckTwo = $luckTwo ?? rand(0, 10);
+    
         $scoreOne = $playerOne->getSkillLevel() + $luckOne;
         $scoreTwo = $playerTwo->getSkillLevel() + $luckTwo;
-
+    
         if ($tournament->getCategory()->isMens()) {
             $scoreOne += ($playerOne->getStrength() ?? 0) + ($playerOne->getSpeed() ?? 0);
             $scoreTwo += ($playerTwo->getStrength() ?? 0) + ($playerTwo->getSpeed() ?? 0);
@@ -87,7 +105,12 @@ class PlayTournamentUseCase {
             $scoreOne += ($playerOne->getReactionTime() ?? 0);
             $scoreTwo += ($playerTwo->getReactionTime() ?? 0);
         }
-
-        return $scoreOne >= $scoreTwo ? $playerOne : $playerTwo;
+    
+        // Recurro a la recursividad en caso de empate
+        if ($scoreOne === $scoreTwo) {
+            return $this->simulateMatch($playerOne, $playerTwo, $tournament, null, null);
+        }
+    
+        return $scoreOne > $scoreTwo ? $playerOne : $playerTwo;
     }
 }

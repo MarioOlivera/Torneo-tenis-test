@@ -1,5 +1,5 @@
 <?php
-namespace Src\Application\DTOs\Player;
+namespace Src\Application\DTOs\Tournament;
 
 use Src\Domain\Enums\TournamentCategory;
 use Src\Domain\Enums\TournamentStatus;
@@ -7,7 +7,7 @@ use Src\Domain\Exceptions\ValidationException;
 
 use DateTimeImmutable;
 
-final class ListPlayersDTO {
+final class ListTournamentsDTO {
     public function __construct(
         public readonly ?DateTimeImmutable $start_date,
         public readonly ?DateTimeImmutable $end_date,

@@ -1,6 +1,8 @@
 <?php
 namespace Src\Infrastructure\Http\Responses;
 
+use Src\Domain\Exceptions\DomainException;
+
 final class Envelope implements \JsonSerializable
 {
     private bool $response;
@@ -60,6 +62,17 @@ final class Envelope implements \JsonSerializable
         $envelope->setResponse(false);
         $envelope->setErrors(new ErrorResponse(\Src\Domain\Enums\ErrorCode::NOT_FOUND_RESOURCE, "Not Found"));
         $envelope->setHttpCode(404);
+        return $envelope;
+    }
+
+    public static function fromDomainException(DomainException $e) : Envelope {
+        $envelope = new Envelope();
+        $envelope->setResponse(false);
+        $envelope->setErrors(new ErrorResponse(
+            $e->getErrorCode(),
+            $e->getMessage()
+        ));
+        $envelope->setHttpCode($e->getHttpCode());
         return $envelope;
     }
 

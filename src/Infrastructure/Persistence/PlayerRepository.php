@@ -1,6 +1,7 @@
 <?php
 namespace Src\Infrastructure\Persistence;
 
+use Src\Domain\Collections\PlayerCollection;
 use Src\Domain\Entities\Player;
 use Src\Domain\Repositories\PlayerRepositoryInterface;
 use Src\Domain\Enums\Gender;
@@ -8,14 +9,15 @@ use Src\Domain\Enums\Gender;
 class PlayerRepository implements PlayerRepositoryInterface {
     public function __construct(private \mysqli $connection) {}
 
-    public function findAll(): array
+    public function findAll(): PlayerCollection
     {
         $query = "SELECT * FROM players";
         $result = $this->connection->query($query);
 
-        $players = [];
+        $players = new PlayerCollection();
+        
         while ($row = $result->fetch_assoc()) {
-            $players[] = new Player(
+            $players->append(new Player(
                 $row['id'], 
                 $row['name'], 
                 $row['skill_level'], 
@@ -25,7 +27,7 @@ class PlayerRepository implements PlayerRepositoryInterface {
                 $row['reaction_time'], 
                 new \DateTimeImmutable($row['created_at']), 
                 new \DateTimeImmutable($row['updated_at'])
-            );
+            ));
         }
 
         return $players;

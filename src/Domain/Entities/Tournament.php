@@ -5,13 +5,10 @@ use DateTimeImmutable;
 use Src\Domain\Enums\TournamentCategory;
 use Src\Domain\Enums\TournamentStatus;
 
-class Tournament implements \JsonSerializable{
-    private ?int $id;
+class Tournament extends BaseEntity{
     private string $name;
     private TournamentCategory $category;
     private TournamentStatus $status;
-    private DateTimeImmutable $created_at;
-    private DateTimeImmutable $updated_at;
     public function __construct(
         ?int $id,
         string $name,  
@@ -27,14 +24,6 @@ class Tournament implements \JsonSerializable{
         $this->setStatus($status);
         $this->setCreatedAt($created_at);
         $this->setUpdatedAt($updated_at);
-    }
-
-    private function setId(?int $id){
-        $this->id = $id;
-    }
-
-    public function getId() : ?int{
-        return $this->id;
     }
 
     public function getName(): string { return $this->name; }
@@ -69,14 +58,6 @@ class Tournament implements \JsonSerializable{
         return $this->status;
     }
 
-    public function getCreatedAt(): DateTimeImmutable { return $this->created_at; }
-    public function setCreatedAt(DateTimeImmutable $datetime): void { $this->created_at = $datetime; }
-
-    public function getUpdatedAt(): DateTimeImmutable { return $this->updated_at; }
-    private function setUpdatedAt(DateTimeImmutable $datetime): void { 
-        $this->updated_at = $datetime; 
-    }
-
     private function normalizeName(string $name): string {
         $name = trim($name);
         $name = strtolower($name);
@@ -88,14 +69,10 @@ class Tournament implements \JsonSerializable{
        return [
           'id' => $this->id,
           'name' => $this->name,
-          'category_id' => $this->category->value,
-          'status_id' => $this->status->value,
+          'category_id' => $this->category,
+          'status_id' => $this->status,
           'created_at' => $this->created_at->format('Y-m-d H:i:s'),
           'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
         ];
-    }
-
-    public function jsonSerialize(): array {
-        return $this->toArray();
     }
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Src\Infrastructure\Persistence;
 
+use Src\Domain\Collections\TournamentCollection;
 use Src\Domain\Entities\Tournament;
 use Src\Domain\Repositories\TournamentRepositoryInterface;
 use Src\Domain\Enums\TournamentCategory;
@@ -9,7 +10,7 @@ use Src\Domain\Enums\TournamentStatus;
 class TournamentRepository implements TournamentRepositoryInterface {
     public function __construct(private \mysqli $connection) {}
 
-    public function findAll(?string $start_date, ?string $end_date, ?int $category_id, ?int $status_id): array {
+    public function findAll(?string $start_date, ?string $end_date, ?int $category_id, ?int $status_id): TournamentCollection {
         $query = "SELECT * FROM tournaments";
         $conditions = [];
         $params = [];
@@ -65,8 +66,8 @@ class TournamentRepository implements TournamentRepositoryInterface {
         }
 
         $stmt->close();
-    
-        return $tournaments;
+
+        return new TournamentCollection($tournaments);
     }
 
     public function findById(int $id): ?Tournament {

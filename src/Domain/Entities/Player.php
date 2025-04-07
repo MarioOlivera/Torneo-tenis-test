@@ -11,17 +11,14 @@ use Src\Domain\Exceptions\SkillLevelOutOfRangeException;
 use Src\Domain\Exceptions\StrengthOutOfRangeException;
 use Src\Domain\Exceptions\SpeedOutOfRangeException;
 use Src\Domain\Exceptions\ReactionTimeOutOfRangeException;
-class Player implements \JsonSerializable
+class Player extends BaseEntity
 {
-    private ?int $id;
     private string $name;
     private int $skill_level;
     private ?int $strength = null;
     private ?int $speed = null;
     private ?int $reaction_time = null;
     private Gender $gender;
-    private DateTimeImmutable $created_at;
-    private DateTimeImmutable $updated_at;
 
     public function __construct(
         ?int $id,
@@ -41,14 +38,6 @@ class Player implements \JsonSerializable
         $this->setGender($gender);
         $this->setCreatedAt($created_at);
         $this->setUpdatedAt($updated_at);
-    }
-
-    public function getId(): ?int { return $this->id; }
-
-    private function setId(?int $id): void { 
-      $this->id = $id; 
-
-      $this->setUpdatedAt(new DateTimeImmutable()); 
     }
 
     public function getName(): string { return $this->name; }
@@ -121,21 +110,6 @@ class Player implements \JsonSerializable
     
       $this->setUpdatedAt(new DateTimeImmutable()); 
     }
-
-    public function getCreatedAt(): DateTimeImmutable { return $this->created_at; }
-
-    public function setCreatedAt(DateTimeImmutable $datetime): void { 
-      $this->created_at = $datetime; 
-      
-      $this->setUpdatedAt(new DateTimeImmutable()); 
-    }
-
-    public function getUpdatedAt(): DateTimeImmutable { return $this->updated_at; }
-
-    private function setUpdatedAt(DateTimeImmutable $datetime): void { 
-      $this->updated_at = $datetime; 
-    }
-
     private function validateGenderAttributes(
       Gender $gender, 
       ?int $strength, 
@@ -157,9 +131,13 @@ class Player implements \JsonSerializable
       $this->speed = $speed;
       $this->reaction_time = $reaction_time;
     }
+    private function normalizeName(string $name): string {
+      $name = trim($name);
+      $name = preg_replace('/\s+/', ' ', $name);
+      return ucwords(strtolower($name));
+    }
 
     public function toArray(): array {
-
       return [
         'id' => $this->id,
         'name' => $this->name,
@@ -171,15 +149,5 @@ class Player implements \JsonSerializable
         'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
       ];
-    }
-
-    public function jsonSerialize(): array {
-        return $this->toArray();
-    }
-
-    private function normalizeName(string $name): string {
-      $name = trim($name);
-      $name = preg_replace('/\s+/', ' ', $name);
-      return ucwords(strtolower($name));
     }
 }

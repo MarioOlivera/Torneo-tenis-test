@@ -11,10 +11,13 @@ use Src\Application\UseCases\Tournament\ListTournamentsUseCase;
 use Src\Application\UseCases\Tournament\CancelTournamentUseCase;
 use Src\Application\UseCases\Tournament\PlayTournamentUseCase;
 use Src\Application\UseCases\Tournament\RegisterPlayerToTournamentUseCase;
+
 use Src\Application\DTOs\Tournament\CreateTournamentDTO;
 use Src\Application\DTOs\Tournament\UpdateTournamentDTO;
 use Src\Application\DTOs\Tournament\RegisterPlayerTournamentDTO;
-use Src\Application\DTOs\Player\ListPlayersDTO;
+use Src\Application\DTOs\Tournament\ListTournamentsDTO;
+
+use Src\Domain\Exceptions\DomainException;
 
 class TournamentController {
     public function __construct(
@@ -31,16 +34,12 @@ class TournamentController {
 
         try
         {
-            $dto = ListPlayersDTO::fromRequest($request->getQuery());
-            $response->setData($this->listTournamentsUseCase->execute($dto));
+            $dto = ListTournamentsDTO::fromRequest($request->getQuery());
+
+            $response->setData($this->listTournamentsUseCase->execute($dto)->toArray());
         }
-        catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
         }
         return $response;
     }
@@ -53,13 +52,9 @@ class TournamentController {
             $dto = CreateTournamentDTO::fromRequest($request->getBody());
             $response->setData($this->createTournamentUseCase->execute($dto)->toArray());
             $response->setHttpCode(201);
-        } catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
+        }
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
         }
 
         return $response;
@@ -73,14 +68,11 @@ class TournamentController {
             $updated = $this->updateTournamentUseCase->execute($dto);
             $response->setData($updated->toArray());
             $response->setHttpCode(200);
-        } catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
         }
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
+        }
+
         return $response;
     }
 
@@ -89,15 +81,10 @@ class TournamentController {
 
         try
         {
-            $this->cancelTournamentUseCase->execute($id);
+            $response->setData($this->cancelTournamentUseCase->execute($id)->toArray());
         }
-        catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
         }
 
         return $response;
@@ -111,13 +98,8 @@ class TournamentController {
             $dto = RegisterPlayerTournamentDTO::fromRequest($id, $request->getBody());
             $response->setData($this->registerPlayerToTournamentUseCase->execute($dto)->toArray());
         }
-        catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
         }
 
         return $response;
@@ -128,16 +110,10 @@ class TournamentController {
 
         try
         {
-            $this->playTournamentUseCase->execute($id);
-            $response->setData(["RECIBI" => $id]);
+            $response->setData($this->playTournamentUseCase->execute($id)->toArray());
         }
-        catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
         }
 
         return $response;

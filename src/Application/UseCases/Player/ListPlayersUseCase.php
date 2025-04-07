@@ -1,6 +1,7 @@
 <?php
 namespace Src\Application\UseCases\Player;
 
+use Src\Domain\Collections\PlayerCollection;
 use Src\Domain\Repositories\PlayerRepositoryInterface;
 
 class ListPlayersUseCase
@@ -9,7 +10,7 @@ class ListPlayersUseCase
         private PlayerRepositoryInterface $playerRepository
     ) {}
 
-    public function execute(): array
+    public function execute(): PlayerCollection
     {
         return $this->playerRepository->findAll();
     }

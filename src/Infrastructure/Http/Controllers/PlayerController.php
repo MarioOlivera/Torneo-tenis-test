@@ -12,6 +12,8 @@ use Src\Application\UseCases\Player\ShowPlayerUseCase;
 use Src\Application\DTOs\Player\CreatePlayerDTO;
 use Src\Application\DTOs\Player\UpdatePlayerDTO;
 
+use Src\Domain\Exceptions\DomainException;
+
 class PlayerController {
     public function __construct(
         private ListPlayersUseCase $listPlayersUseCase,
@@ -22,7 +24,15 @@ class PlayerController {
 
     public function index(Request $request) : Envelope {
         $response = new Envelope();
-        $response->setData($this->listPlayersUseCase->execute());
+
+        try
+        {
+            $response->setData($this->listPlayersUseCase->execute()->toArray());
+        }
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
+        }
+
         return $response;
     }
 
@@ -34,13 +44,9 @@ class PlayerController {
             $dto = CreatePlayerDTO::fromRequest($request->getBody());
             $response->setData($this->createPlayerUseCase->execute($dto)->toArray());
             $response->setHttpCode(201);
-        } catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
+        }
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
         }
 
         return $response;
@@ -52,13 +58,9 @@ class PlayerController {
         try
         {
             $response->setData($this->showPlayerUseCase->execute($id)->toArray());
-        } catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
+        }
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
         }
 
         return $response;
@@ -72,14 +74,11 @@ class PlayerController {
             $updatedPlayer = $this->updatePlayerUseCase->execute($dto);
             $response->setData($updatedPlayer->toArray());
             $response->setHttpCode(200);
-        } catch (\Src\Domain\Exceptions\DomainException $e) {
-            $response->setResponse(false);
-            $response->setErrors(new ErrorResponse(
-                $e->getErrorCode(),
-                $e->getMessage()
-            ));
-            $response->setHttpCode($e->getHttpCode());
         }
+        catch (DomainException $e) {
+            $response = Envelope::fromDomainException($e);
+        }
+        
         return $response;
     }
 }

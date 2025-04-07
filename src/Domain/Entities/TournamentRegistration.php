@@ -5,13 +5,10 @@ use DateTimeImmutable;
 
 use Src\Domain\Exceptions\FemalePlayerInMaleTournamentException;
 use Src\Domain\Exceptions\MalePlayerInFemaleTournamentException;
-class TournamentRegistration implements \JsonSerializable
+class TournamentRegistration extends BaseEntity
 {
-    private ?int $id;
     private Player $player;
     private Tournament $tournament;
-    private DateTimeImmutable $created_at;
-    private DateTimeImmutable $updated_at;
 
     public function __construct(
         ?int $id,
@@ -27,9 +24,6 @@ class TournamentRegistration implements \JsonSerializable
 
         $this->validatePlayerAndTournament($player, $tournament);
     }
-
-    public function getId(): ?int { return $this->id; }
-    private function setId(?int $id): void { $this->id = $id; $this->setUpdatedAt(new DateTimeImmutable()); }
 
     public function getTournament() : Tournament
     {
@@ -57,16 +51,11 @@ class TournamentRegistration implements \JsonSerializable
         $this->tournament = $tournament;
     }
 
-    public function getCreatedAt(): DateTimeImmutable { return $this->created_at; }
-
-    private function setUpdatedAt(DateTimeImmutable $updated_at) : void { $this->updated_at = $updated_at; }
-    public function getUpdatedAt(): DateTimeImmutable { return $this->updated_at; }
-
     public function toArray(): array {
       return [
         'id' => $this->id,
-        'player_id' => $this->getPlayer()->getId(),
-        'tournament_id' => $this->getTournament()->getId(),
+        'player' => $this->getPlayer(),
+        'tournament' => $this->getTournament(),
         'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
       ];
