@@ -21,43 +21,21 @@ final class RegisterPlayerTournamentDTO {
     private static function validate(int $tournament_id, array $data): void {
         $errors = [];
 
-        if(!is_numeric($tournament_id))
-        {
+        if(!is_numeric($tournament_id)) {
             $errors['tournament_id'] = 'tournament_id must be a number';
-        }
-        else if($tournament_id < 0)
-        {
+        } else if($tournament_id < 0) {
             $errors['tournament_id'] = 'tournament_id must be greater than 0';
         }
 
-        if(!isset($data['player_id']))
-        {
-            $errors['player_id'] = 'player_id level is required';
-        }
-        else if(!is_numeric($data['player_id']))
-        {
+        if(!isset($data['player_id'])) {
+            $errors['player_id'] = 'player_id is required';
+        } else if(!is_numeric($data['player_id'])) {
             $errors['player_id'] = 'player_id must be a number';
-        }
-        else if($data['player_id'] < 0)
-        {
+        } else if($data['player_id'] < 0) {
             $errors['player_id'] = 'player_id must be greater than 0';
         }
 
-        if(!isset($data['player_id']))
-        {
-            $errors['player_id'] = 'player_id level is required';
-        }
-        else if(!is_numeric($data['player_id']))
-        {
-            $errors['player_id'] = 'player_id must be a number';
-        }
-        else if($data['player_id'] < 0)
-        {
-            $errors['player_id'] = 'player_id must be greater than 0';
-        }
-
-        if(!empty($errors)) 
-        {
+        if(!empty($errors)) {
             throw new ValidationException(json_encode($errors));
         }
     }

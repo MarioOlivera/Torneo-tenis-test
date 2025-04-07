@@ -16,7 +16,7 @@ class RegisterPlayerToTournamentUseCase {
     public function __construct(
          private TournamentRepositoryInterface $tournamentRepository,
          private PlayerRepositoryInterface $playerRepository,
-         private TournamentRegistrationRepositoryInterface $tournamentRegistrationRepositoryInterface
+         private TournamentRegistrationRepositoryInterface $tournamentRegistrationRepository
     ){}
 
     public function execute(RegisterPlayerTournamentDTO $dto): TournamentRegistration 
@@ -40,15 +40,6 @@ class RegisterPlayerToTournamentUseCase {
             throw new PlayerNotFoundException("Player ".$playerId." not found", 400);
         }
 
-        /*
-        if($tournament->getCategory()->isMens() && $player->getGender()->isFemale()) {
-            throw new FemalePlayerInMaleTournamentException("Player ".$playerId." is a female player in a male tournament", 400);
-        }
-        else if($tournament->getCategory()->isWomens() && $player->getGender()->isMale()) {
-            throw new MalePlayerInFemaleTournamentException("Player ".$playerId." is a male player in a female tournament", 400);
-        }
-        */
-
-        return $this->tournamentRegistrationRepositoryInterface->save(new TournamentRegistration(null, $player, $tournament));
+        return $this->tournamentRegistrationRepository->save(new TournamentRegistration(null, $player, $tournament));
     }
 }

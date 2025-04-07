@@ -30,7 +30,7 @@ final class CreatePlayerDTO {
     private static function validate(array $data): void {
         $errors = [];
 
-        if (!isset($data['name'])) {
+        if (!isset($data['name']) || empty(trim($data['name']))) {
             $errors['name'] = 'Name is required';
         }
         else
@@ -66,43 +66,50 @@ final class CreatePlayerDTO {
             $errors['gender_id'] = 'Invalid gender_id';
         }
 
-        if(!isset($data['strength']))
-        {
-            $errors['strength'] = 'strength is required';
-        }
-        else if(!is_numeric($data['strength']))
-        {
-            $errors['strength'] = 'strength must be a number';
-        }
-        else if($data['strength'] < 0 || $data['strength'] > 100)
-        {
-            $errors['strength'] = 'strength must be between 0-100';
-        }
-        
-        if(!isset($data['speed']))
-        {
-            $errors['speed'] = 'speed is required';
-        }
-        else if(!is_numeric($data['speed']))
-        {
-            $errors['speed'] = 'speed must be a number';
-        }
-        else if($data['speed'] < 0 || $data['speed'] > 100)
-        {
-            $errors['speed'] = 'speed must be between 0-100';
-        }
-        
-        if(!isset($data['reaction_time']))
-        {
-            $errors['reaction_time'] = 'reaction_time is required';
-        }
-        else if(!is_numeric($data['reaction_time']))
-        {
-            $errors['reaction_time'] = 'reaction_time must be a number';
-        }
-        else if($data['reaction_time'] < 0 || $data['reaction_time'] > 100)
-        {
-            $errors['reaction_time'] = 'reaction_time must be between 0-100';
+        // VALIDACIÓN SEGUN GENERO
+        if (isset($data['gender_id']) && is_numeric($data['gender_id']) && Gender::isValid($data['gender_id'])) {
+            $gender = Gender::from($data['gender_id']);
+
+            if ($gender->isMale()) {
+                if(!isset($data['strength']))
+                {
+                    $errors['strength'] = 'strength is required';
+                }
+                else if(!is_numeric($data['strength']))
+                {
+                    $errors['strength'] = 'strength must be a number';
+                }
+                else if($data['strength'] < 0 || $data['strength'] > 100)
+                {
+                    $errors['strength'] = 'strength must be between 0-100';
+                }
+
+                if(!isset($data['speed']))
+                {
+                    $errors['speed'] = 'speed is required';
+                }
+                else if(!is_numeric($data['speed']))
+                {
+                    $errors['speed'] = 'speed must be a number';
+                }
+                else if($data['speed'] < 0 || $data['speed'] > 100)
+                {
+                    $errors['speed'] = 'speed must be between 0-100';
+                }
+            } elseif ($gender->isFemale()) {
+                if(!isset($data['reaction_time']))
+                {
+                    $errors['reaction_time'] = 'reaction_time is required';
+                }
+                else if(!is_numeric($data['reaction_time']))
+                {
+                    $errors['reaction_time'] = 'reaction_time must be a number';
+                }
+                else if($data['reaction_time'] < 0 || $data['reaction_time'] > 100)
+                {
+                    $errors['reaction_time'] = 'reaction_time must be between 0-100';
+                }
+            }
         }
 
         if(!empty($errors)) 

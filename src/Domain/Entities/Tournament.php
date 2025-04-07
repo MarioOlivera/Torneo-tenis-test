@@ -81,7 +81,7 @@ class Tournament implements \JsonSerializable{
         $name = trim($name);
         $name = strtolower($name);
         $name = preg_replace('/\s+/', ' ', $name);
-        return $name;
+        return ucwords($name);
     }
 
     public function toArray(): array {

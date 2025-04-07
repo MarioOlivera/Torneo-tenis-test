@@ -22,14 +22,10 @@ final class CreateTournamentDTO {
     private static function validate(array $data): void {
         $errors = [];
 
-        if (!isset($data['name'])) {
+        if (!isset($data['name']) || empty(trim($data['name']))) {
             $errors['name'] = 'Name is required';
-        }
-        else
-        {
-            if (strlen($data['name']) < 3) {
-                $errors['name'] = 'Name must be at least 3 characters';
-            }
+        } else if (strlen(trim($data['name'])) < 3) {
+            $errors['name'] = 'Name must be at least 3 characters';
         }
 
         if(!isset($data['category_id']))

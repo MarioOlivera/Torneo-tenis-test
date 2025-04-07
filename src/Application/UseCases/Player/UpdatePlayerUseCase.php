@@ -11,7 +11,6 @@ class UpdatePlayerUseCase {
     ) {}
 
     public function execute(UpdatePlayerDTO $dto): Player {
-        // Buscar el jugador existente
         $player = $this->repository->findById($dto->id);
         if (!$player) {
             throw new \Src\Domain\Exceptions\DomainException(
@@ -21,7 +20,6 @@ class UpdatePlayerUseCase {
             );
         }
 
-        // Actualizar los atributos solo si vienen en el DTO
         if (!is_null($dto->name)) {
             $player->setName($dto->name);
         }

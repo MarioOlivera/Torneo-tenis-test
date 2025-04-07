@@ -33,7 +33,7 @@ final class UpdatePlayerDTO {
         $errors = [];
 
         if (isset($data['name'])) {
-            if (strlen($data['name']) < 3) {
+            if (strlen(trim($data['name'])) < 3) {
                 $errors['name'] = 'Name must be at least 3 characters';
             }
         }
