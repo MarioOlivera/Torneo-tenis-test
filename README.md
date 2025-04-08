@@ -1,4 +1,4 @@
-# **Intrucciones del Challenge**
+# 🎾 ** Intrucciones del Challenge**
 
 - La modalidad del torneo es por eliminación directa.
 - Puede asumir por simplicidad que la cantidad de jugadores es potencia de 2.
@@ -34,3 +34,72 @@ Apartado 2: API Rest (Swagger + Integration Testing)
 Apartado 3: Utilizar una base de datos no embebida.
 Apartado 4: Subir el código a un repositorio como GitLab/GitHub/etc.
 Apartado 5: Subir el o los servicios a AWS/Azure/Etc utilizando Docker o kubernetes.
+
+# 🎾 Torneo de Tenis - API REST
+
+## 📋 Requisitos técnicos
+
+- **PHP**: Versión 8.2 o superior
+- **Base de datos**: MySQL 5.7+/MariaDB 10.3+
+- **Composer**: Para gestión de dependencias
+
+## 🚀 Instalación y configuración
+
+### 1. Clonar el repositorio
+
+    git clone https://github.com/MarioOlivera/Torneo-tenis-test.git
+    cd Torneo-tenis-test
+
+### 2. Instalar dependencias
+
+```bash
+composer install
+```
+
+### 3. Configurar base de datos
+
+- Crear una base de datos MySQL (ej: **tournament_db**)
+- Importar la estructura inicial: **archivo db.sql**.
+
+### 4. Configurar variables de entorno
+
+```bash
+cp .env.example .env
+```
+
+Editar el archivo **.env** con tu configuración
+
+```bash
+BASE_URL=http://localhost:8000
+APP_ENV=development
+DB_HOST=localhost
+DB_USER=root
+DB_PASS=
+DB_NAME=tournament_db
+```
+
+### 5. ▶️ Ejecución del proyecto
+
+Iniciar el servidor de desarrollo:
+
+```bash
+php -d max_execution_time=0 -S localhost:8000 -t public
+```
+
+### 6. Acceder a la documentación
+
+```bash
+http://localhost:8000/docs
+```
+
+### 7. Comandos composer
+
+Generar/actualizar documentación Swagger:
+
+```bash
+composer run docs
+```
+
+### 📊 Modelo de base de datos
+
+![N|Solid](https://github.com/MarioOlivera/Torneo-tenis-test/blob/main/model_db.png?raw=true)
