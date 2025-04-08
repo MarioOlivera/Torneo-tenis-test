@@ -3,7 +3,7 @@
 ## 📋 Requisitos técnicos
 
 - **PHP**: Versión 8.2 o superior
-- **Base de datos**: MySQL 5.7+/MariaDB 10.3+
+- **Base de datos**: MySQL
 - **Composer**: Para gestión de dependencias
 
 ## 🚀 Instalación y configuración
