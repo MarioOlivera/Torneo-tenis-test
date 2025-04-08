@@ -1,0 +1,674 @@
+openapi: 3.0.0
+info:
+  title: 'API Tennis Tournaments'
+  description: 'API documentation for Tournament Tennis'
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost:8000'
+    description: 'URL API'
+paths:
+  /api/v1/players:
+    get:
+      tags:
+        - Players
+      summary: 'List all players'
+      description: 'Returns a list of all players'
+      operationId: a543e9ba8c336a6ad65f53510a935d7c
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/Player' } }, response: { example: true }, errors: { example: null } }, type: object }
+    post:
+      tags:
+        - Players
+      summary: 'Create a new player'
+      description: 'Register a new player'
+      operationId: b715603caeb508df47152ef8ab79dd7f
+      requestBody:
+        description: 'Player data'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerCreateRequest'
+      responses:
+        '201':
+          description: 'Player created successfully'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { $ref: '#/components/schemas/Player' }, response: { example: true }, errors: { example: null } }, type: object }
+        '400':
+          description: 'Validation error'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, data: { example: null }, errors: { example: { code: '2', description: 'Validation error', other_info: "{'name':'Name is required','skill_level':'Skill level is required','gender_id':'gender_id is required'}" } } }, type: object }
+  '/api/v1/players/{id}':
+    get:
+      tags:
+        - Players
+      summary: 'Get a specific player'
+      description: 'Returns detailed information about a single player'
+      operationId: 74c001b46378a8193403e775b3bad8df
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of the player to retrieve'
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { $ref: '#/components/schemas/Player' }, response: { example: true }, errors: { example: null } }, type: object }
+        '404':
+          description: 'Player not found'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '8', description: 'Player not found', other_info: 'Player 1000 not found' } } }, type: object }
+    patch:
+      tags:
+        - Players
+      summary: 'Update partial player information'
+      description: 'Updates one or more fields of an existing player. All fields are optional.'
+      operationId: 02a97aa34e3ee8141108f64ea6b27512
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of the player to update'
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 3
+      requestBody:
+        description: 'Player data'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlayerUpdateRequest'
+      responses:
+        '200':
+          description: 'Player updated successfully'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { $ref: '#/components/schemas/Player' }, response: { example: true }, errors: { example: null } }, type: object }
+        '404':
+          description: 'Player not found'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '404', description: 'Player not found', other_info: null } } }, type: object }
+  /api/v1/tournaments:
+    get:
+      tags:
+        - Tournaments
+      summary: 'List all tournaments'
+      description: 'Returns a filtered list of tournaments based on optional query parameters'
+      operationId: 87d37e9b4fa382ef068aa3338c8b5837
+      parameters:
+        -
+          name: start_date
+          in: query
+          description: 'Filter tournaments starting on or after this date (YYYY-MM-DD format)'
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2025-01-01'
+        -
+          name: end_date
+          in: query
+          description: 'Filter tournaments ending on or before this date (YYYY-MM-DD format)'
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2025-12-31'
+        -
+          name: category_id
+          in: query
+          description: "Filter by tournament category: 1 - MEN'S, 2 - WOMEN'S"
+          required: false
+          schema:
+            type: integer
+            enum:
+              - 1
+              - 2
+            example: 1
+        -
+          name: status_id
+          in: query
+          description: 'Filter by tournament status: 1 - PENDING, 2 - PLAYED, 3 - CANCELLED'
+          required: false
+          schema:
+            type: integer
+            enum:
+              - 1
+              - 2
+              - 3
+            example: 1
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/Tournament' } }, response: { example: true }, errors: { example: null } }, type: object }
+    post:
+      tags:
+        - Tournaments
+      summary: 'Create a new tournament'
+      description: 'Register a new tournament in the system'
+      operationId: adf1800757fa892b752e2dd2591d62a6
+      requestBody:
+        description: 'Tournament data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - category_id
+              properties:
+                name:
+                  type: string
+                  minLength: 3
+                  example: '2025 Season Tournament'
+                category_id:
+                  description: "1 - MEN'S, 2 - WOMEN'S"
+                  type: integer
+                  enum: [1, 2]
+                  example: 1
+              type: object
+      responses:
+        '201':
+          description: 'Tournament created successfully'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { $ref: '#/components/schemas/Tournament' }, response: { example: true }, errors: { example: null } }, type: object }
+        '400':
+          description: 'Validation error'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, data: { example: null }, errors: { example: { code: '2', description: 'Validation error', other_info: "{'name':'Name is required','category_id':'category_id is required'}" } } }, type: object }
+  '/api/v1/tournaments/{id}':
+    patch:
+      tags:
+        - Tournaments
+      summary: 'Update tournament name'
+      description: 'Updates only the name of an existing tournament. Category and status cannot be modified after creation.'
+      operationId: 23fb6cf6dc74143f07c1a910835624af
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of the tournament to update'
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 3
+      requestBody:
+        description: 'New tournament name'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+              properties:
+                name:
+                  description: 'New name for the tournament (minimum 3 characters)'
+                  type: string
+                  minLength: 3
+                  example: 'Updated Tournament Name'
+              type: object
+      responses:
+        '200':
+          description: 'Tournament name updated successfully'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { $ref: '#/components/schemas/Tournament' }, response: { example: true }, errors: { example: null } }, type: object }
+        '400':
+          description: 'Validation error'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '2', description: 'Validation error', other_info: "{'name':'Name is required'}" } } }, type: object }
+        '404':
+          description: 'Tournament not found'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '3', description: 'Tournament not found', other_info: 'Tournament 25 not found' } } }, type: object }
+  '/api/v1/tournaments/{id}/cancel':
+    post:
+      tags:
+        - Tournaments
+      summary: 'Cancel a tournament'
+      description: 'Cancels an existing tournament by its ID. No request body required.'
+      operationId: 43b89b38abc59c1982e910fe31b67eb2
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of the tournament to cancel'
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 3
+      responses:
+        '200':
+          description: 'Tournament cancelled successfully'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { $ref: '#/components/schemas/Tournament' }, response: { example: true }, errors: { example: null } }, type: object }
+        '404':
+          description: 'Tournament not found'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '3', description: 'Tournament not found', other_info: 'Tournament 25 not found' } } }, type: object }
+        '400':
+          description: 'Tournament cannot be cancelled'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '4', description: 'Tournament is not pending', other_info: 'Tournament 1 is not pending' } } }, type: object }
+  '/api/v1/tournaments/{id}/registrations':
+    post:
+      tags:
+        - Tournaments
+      summary: 'Register a player to a tournament'
+      description: 'Adds a player to the specified tournament'
+      operationId: c721cbdd16b4a40a2045fa6162106ba8
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of the tournament'
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      requestBody:
+        description: 'Player registration data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - player_id
+              properties:
+                player_id:
+                  description: 'ID of the player to register'
+                  type: integer
+                  example: 2
+              type: object
+      responses:
+        '201':
+          description: 'Player registered successfully'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { $ref: '#/components/schemas/TournamentRegistration' }, response: { example: true }, errors: { example: null } }, type: object }
+        '404':
+          description: 'Not found'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '3', description: 'Tournament not found', other_info: 'Tournament 25 not found' } } }, type: object }
+        '400':
+          description: 'Player already registered'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '19', description: 'Player already registered in tournament', other_info: 'Player 2 is already registered in tournament 1' } } }, type: object }
+  '/api/v1/tournaments/{id}/play':
+    post:
+      tags:
+        - Tournaments
+      summary: 'Play a tournament'
+      description: 'Simulates all matches of a tournament and determines the winner'
+      operationId: 59ec780ae10a3976cdebe8be852cbb9d
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID of the tournament to play'
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: 'Tournament played successfully'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { data: { $ref: '#/components/schemas/TournamentPlayResult' }, response: { example: true }, errors: { example: null } }, type: object }
+        '404':
+          description: 'Tournament not found'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { $ref: '#/components/schemas/Envelope' }
+                  - { properties: { response: { example: false }, errors: { example: { code: '3', description: 'Tournament not found', other_info: 'Tournament 25 not found' } } }, type: object }
+components:
+  schemas:
+    Envelope:
+      required:
+        - response
+        - data
+        - errors
+      properties:
+        response:
+          description: 'Indica si la solicitud fue exitosa'
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            description: 'Contenido principal de la respuesta (varía por endpoint)'
+            type: object
+        errors:
+          description: 'Detalles del error (si response=false)'
+          properties:
+            code:
+              type: string
+              example: '2'
+            description:
+              type: string
+              example: 'Validation error'
+            other_info:
+              type: string
+              example: ''
+          type: object
+          nullable: true
+      type: object
+    PlayerCreateRequest:
+      description: 'Note: strength and speed are required when gender_id=1 (Male). reaction_time is required when gender_id=2 (Female)'
+      required:
+        - name
+        - skill_level
+        - gender_id
+      properties:
+        name:
+          description: 'Full name of the player'
+          type: string
+          example: 'Mario Olivera'
+        skill_level:
+          description: "Player's skill level (1-100)"
+          type: integer
+          example: 95
+        strength:
+          description: 'Required for Male players (1-100)'
+          type: integer
+          example: 85
+          nullable: true
+        speed:
+          description: 'Required for Male players (1-100)'
+          type: integer
+          example: 90
+          nullable: true
+        reaction_time:
+          description: 'Required for Female players (1-100)'
+          type: integer
+          example: 90
+          nullable: true
+        gender_id:
+          description: '1 - Male | 2 - Female'
+          type: integer
+          example: 1
+      type: object
+    PlayerUpdateRequest:
+      description: 'All fields are optional. Gender-specific validations apply when updating gender_id. If the player is registered for a pending tournament and their gender is changed, the endpoint will return an error.'
+      properties:
+        name:
+          description: 'Full name of the player'
+          type: string
+          example: 'Jose Olivera'
+          nullable: true
+        skill_level:
+          description: "Player's skill level (1-100)"
+          type: integer
+          example: 60
+          nullable: true
+        strength:
+          description: 'Strength level (1-100). Required if gender_id=1'
+          type: integer
+          example: 70
+          nullable: true
+        speed:
+          description: 'Speed level (1-100). Required if gender_id=1'
+          type: integer
+          example: 50
+          nullable: true
+        reaction_time:
+          description: 'Reaction time in ms. Required if gender_id=2'
+          type: integer
+          example: 10
+          nullable: true
+        gender_id:
+          description: '1 - Male | 2 - Female'
+          type: integer
+          example: 1
+          nullable: true
+      type: object
+    Player:
+      description: 'Represents a tennis player with all attributes and performance metrics'
+      required:
+        - id
+        - name
+        - skill_level
+        - gender_id
+      properties:
+        id:
+          description: 'Unique identifier for the player'
+          type: integer
+          example: 1
+        name:
+          description: 'Full name of the player'
+          type: string
+          example: 'Mario Olivera'
+        skill_level:
+          description: "Player's overall skill rating (1-100 scale)"
+          type: integer
+          example: 90
+        strength:
+          description: 'Physical strength rating (1-100 scale). Required for male players.'
+          type: integer
+          example: 20
+        speed:
+          description: 'Movement speed rating (1-100 scale). Required for male players.'
+          type: integer
+          example: 70
+        reaction_time:
+          description: 'Reaction time (1-100 scale). Required for female players.'
+          type: integer
+          example: null
+          nullable: true
+        gender_id:
+          description: "Player's gender: 1 - Male | 2 - Female"
+          type: integer
+          example: 1
+        created_at:
+          description: 'Timestamp when the player record was created'
+          type: string
+          format: date-time
+          example: '2025-04-07 21:36:47'
+        updated_at:
+          description: 'Timestamp when the player record was last updated'
+          type: string
+          format: date-time
+          example: '2025-04-07 21:36:47'
+      type: object
+    Tournament:
+      required:
+        - id
+        - name
+        - category_id
+        - status_id
+      properties:
+        id:
+          description: 'Unique tournament ID'
+          type: integer
+          example: 3
+        name:
+          description: 'Tournament name'
+          type: string
+          example: '2025 Season Tournament'
+        category_id:
+          description: "Tournament category ID: 1 - MEN´S | 2 - WOMEN'S"
+          type: integer
+          example: 2
+        status_id:
+          description: 'Current tournament status ID'
+          type: integer
+          example: 1
+        created_at:
+          description: 'Creation date in Y-m-d H:i:s format'
+          type: string
+          format: date-time
+          example: '2025-04-08 01:49:52'
+        updated_at:
+          description: 'Last update date in Y-m-d H:i:s format'
+          type: string
+          format: date-time
+          example: '2025-04-08 01:49:52'
+      type: object
+    TournamentRegistration:
+      properties:
+        id:
+          description: 'Record ID'
+          type: integer
+          example: 5
+        player:
+          $ref: '#/components/schemas/Player'
+        tournament:
+          $ref: '#/components/schemas/Tournament'
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-04-08 02:13:04'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2025-04-08 02:13:04'
+      type: object
+    TournamentMatch:
+      properties:
+        id:
+          type: integer
+          example: 1
+        player_one:
+          $ref: '#/components/schemas/Player'
+        player_two:
+          $ref: '#/components/schemas/Player'
+        player_winner:
+          $ref: '#/components/schemas/Player'
+        created_at:
+          type: string
+          format: date-time
+          example: '2025-04-08 02:18:33'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2025-04-08 02:18:33'
+      type: object
+    TournamentPlayResult:
+      properties:
+        tournament:
+          $ref: '#/components/schemas/Tournament'
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/TournamentMatch'
+        winner:
+          $ref: '#/components/schemas/Player'
+      type: object
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: 'Error description'
+        other_info:
+          type: string
+          example: 'Other description error'
+      type: object
+tags:
+  -
+    name: Players
+    description: Players
+  -
+    name: Tournaments
+    description: Tournaments

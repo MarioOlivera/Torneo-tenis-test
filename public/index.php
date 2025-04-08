@@ -1,9 +1,33 @@
 <?php
 require __DIR__ . '/../vendor/autoload.php';
 
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__.'/..');
+$dotenv->load();
+
+define('VIEW_PATH', __DIR__ . '/../src/Infrastructure/Views/');
+define('PATH', __DIR__ . '/../src');
+
+if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'development') 
+{
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+} else 
+{
+    ini_set('display_errors', 0);
+    error_reporting(0);
+}
+
 $container = new \Src\Infrastructure\Http\Container();
 
 // Registrando las dependencias
+
+$container->bind(
+    \Src\Infrastructure\Http\Controllers\DocumentationController::class,
+    fn() => new \Src\Infrastructure\Http\Controllers\DocumentationController()
+);
+
 $container->bind(
     \Src\Infrastructure\Http\Controllers\PlayerController::class,
     fn() => new \Src\Infrastructure\Http\Controllers\PlayerController(

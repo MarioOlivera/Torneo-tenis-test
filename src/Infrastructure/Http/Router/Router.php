@@ -1,8 +1,9 @@
 <?php
 namespace Src\Infrastructure\Http\Router;
 
-use \Src\Infrastructure\Http\Container;
+use Src\Infrastructure\Http\Container;
 use Src\Infrastructure\Http\Responses\Envelope;
+use Src\Infrastructure\Http\Responses\ViewResponse;
 use Src\Infrastructure\Http\Request;
 
 final class Router {
@@ -42,11 +43,19 @@ final class Router {
                     self::extractParams($routeUri, $requestUri),
                 );
 
-                $envelope = $controller->$method(...$params);
+                $result = $controller->$method(...$params);
 
-                header('Content-Type: application/json');
-                http_response_code($envelope->getHttpCode());
-                echo json_encode($envelope);
+                if (method_exists($result, 'render')) {
+                    header('Content-Type: text/html');
+                    echo $result->render();
+                }
+                else
+                {
+                    header('Content-Type: application/json');
+                    http_response_code($result->getHttpCode());
+                    echo json_encode($result);
+                }
+
                 return;
             }
         }

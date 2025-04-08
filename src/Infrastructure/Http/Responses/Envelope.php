@@ -2,7 +2,6 @@
 namespace Src\Infrastructure\Http\Responses;
 
 use Src\Domain\Exceptions\DomainException;
-
 final class Envelope implements \JsonSerializable
 {
     private bool $response;

@@ -1,4 +1,4 @@
-# **Torneo De Tennis Test**
+# **Intrucciones del Challenge**
 
 - La modalidad del torneo es por eliminación directa.
 - Puede asumir por simplicidad que la cantidad de jugadores es potencia de 2.

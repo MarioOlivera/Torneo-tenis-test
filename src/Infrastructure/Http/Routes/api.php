@@ -1,9 +1,15 @@
 <?php
 namespace Src\Infrastructure\Http\Routes;
 
+use Src\Infrastructure\Http\Controllers\DocumentationController;
 use Src\Infrastructure\Http\Controllers\TournamentController;
 use Src\Infrastructure\Http\Controllers\PlayerController;
 use Src\Infrastructure\Http\Router\Router;
+
+//DOCUMENTATION 
+Router::get('/', [DocumentationController::class, 'index']);
+Router::get('/docs', [DocumentationController::class, 'index']);
+Router::get('/api/v1/docs', [DocumentationController::class, 'index']);
 
 // THE TOURNAMENTS ENDPOINTS
 Router::get('/api/v1/tournaments', [TournamentController::class, 'index']);
